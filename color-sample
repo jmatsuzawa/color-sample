@@ -3,7 +3,7 @@
 echo 'Format: \e[{ATTRIBUTE};{TEXT_COLOR};{BACKGROUND_COLOR}m'
 echo
 
-for attr in 0 1 4 5; do
+for attr in {0..9}; do
   for text_color in {30..37}; do
     for background_color in {40..47}; do
       echo -ne "\e[${attr};${text_color};${background_color}""m\\\e[${attr};${text_color};${background_color}"'m\e[0;37;40m '
