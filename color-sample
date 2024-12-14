@@ -17,3 +17,21 @@ for attr in {0..9} 21; do
     echo
   done
 done
+echo
+
+# 8-bit color extension
+#  16..231: n = 16 + 36*r + 6*g + 1*b
+# 232..252: grayscale (black to white)
+echo '[Background 8-bit colors]'
+for n in {16..255}; do
+  print_sample  "%-14s" "\033[48;5;${n}m"
+  (( (n-16) % 6 == 5 )) && echo
+done
+echo
+
+echo '[Text 8-bit colors]'
+for n in {16..255}; do
+  print_sample "%-14s" "\033[38;5;${n}m"
+  (( (n-16) % 6 == 5 )) && echo
+done
+echo
