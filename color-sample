@@ -3,10 +3,10 @@
 echo 'Format: \033[{ATTRIBUTE};{TEXT_COLOR};{BACKGROUND_COLOR}m'
 echo
 
-for attr in {0..9}; do
+for attr in {0..9} 21; do
   for text_color in {30..37}; do
     for background_color in {40..47}; do
-      printf "\033[${attr};${text_color};${background_color}m\\\033[${attr};${text_color};${background_color}m\033[0m "
+      printf "\033[${attr};${text_color};${background_color}m%-14s\033[0m " "\\033[${attr};${text_color};${background_color}m"
     done
     echo
   done
