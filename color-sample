@@ -3,15 +3,26 @@
 print_sample() {
   fmt=$1
   sample=$2
-  printf "${sample}${fmt}\033[0m " "${sample}"
+  printf "${sample}${fmt}\033[m " "${sample}"
 }
 
-echo 'Format: \033[{ATTRIBUTE};{TEXT_COLOR};{BACKGROUND_COLOR}m'
-echo
+trap 'printf "\033[m" && exit' 0 1 2 3 15
 
-for attr in {0..9} 21; do
+echo '[Basic Colors]'
+# for attr in {0..9} 21; do
+for attr in {0..2}; do
   for text_color in {30..37}; do
     for background_color in {40..47}; do
+      print_sample "%-14s" "\033[${attr};${text_color};${background_color}m"
+    done
+    echo
+  done
+done
+echo
+
+for attr in {0..2}; do
+  for text_color in {90..97}; do
+    for background_color in {100..107}; do
       print_sample "%-14s" "\033[${attr};${text_color};${background_color}m"
     done
     echo
@@ -22,179 +33,97 @@ echo
 # 8-bit color extension
 #  16..231: n = 16 + 36*r + 6*g + 1*b
 # 232..252: grayscale (black to white)
-echo '[Background 8-bit colors]'
+echo '[8-bit Colors (6x6x6 Colors and Grayscale)]'
 for n in {16..255}; do
   print_sample  "%-14s" "\033[48;5;${n}m"
   (( (n-16) % 6 == 5 )) && echo
 done
 echo
 
-echo '[Text 8-bit colors]'
 for n in {16..255}; do
   print_sample "%-14s" "\033[38;5;${n}m"
   (( (n-16) % 6 == 5 )) && echo
 done
+echo
 
-rgbs=(
-  'r=203 g=0   b=0   '
-  'r=255 g=0   b=0   '
-  'r=255 g=50  b=50  '
-  'r=255 g=100 b=100 '
-  'r=255 g=153 b=153 '
-
-  'r=203 g=50  b=0   '
-  'r=255 g=63  b=0   '
-  'r=255 g=100 b=50  '
-  'r=255 g=140 b=100 '
-  'r=255 g=178 b=153 '
-
-  'r=203 g=100 b=0   '
-  'r=255 g=127 b=0   '
-  'r=255 g=150 b=50  '
-  'r=255 g=178 b=100 '
-  'r=255 g=204 b=153 '
-
-  'r=203 g=152 b=0   '
-  'r=255 g=191 b=0   '
-  'r=255 g=204 b=50  '
-  'r=255 g=216 b=100 '
-  'r=255 g=229 b=153 '
-
-  'r=203 g=203 b=0   '
-  'r=255 g=255 b=0   '
-  'r=255 g=255 b=50  '
-  'r=255 g=255 b=100 '
-  'r=255 g=255 b=153 '
-
-  'r=152 g=203 b=0   '
-  'r=191 g=255 b=0   '
-  'r=204 g=255 b=50  '
-  'r=216 g=255 b=100 '
-  'r=229 g=255 b=153 '
-
-  'r=100 g=203 b=0   '
-  'r=127 g=255 b=0   '
-  'r=150 g=255 b=50  '
-  'r=178 g=255 b=100 '
-  'r=204 g=255 b=153 '
-
-  'r=50  g=203 b=0   '
-  'r=63  g=255 b=0   '
-  'r=100 g=255 b=50  '
-  'r=140 g=255 b=100 '
-  'r=178 g=255 b=153 '
-
-  'r=0   g=203 b=0   '
-  'r=0   g=255 b=0   '
-  'r=50  g=255 b=50  '
-  'r=100 g=255 b=100 '
-  'r=153 g=255 b=153 '
-
-  'r=0   g=203 b=50  '
-  'r=0   g=255 b=63  '
-  'r=50  g=255 b=100 '
-  'r=100 g=255 b=140 '
-  'r=153 g=255 b=178 '
-
-  'r=0   g=203 b=100 '
-  'r=0   g=255 b=127 '
-  'r=50  g=255 b=150 '
-  'r=100 g=255 b=178 '
-  'r=153 g=255 b=204 '
-
-  'r=0   g=203 b=152 '
-  'r=0   g=255 b=191 '
-  'r=50  g=255 b=204 '
-  'r=100 g=255 b=216 '
-  'r=153 g=255 b=229 '
-
-  'r=0   g=203 b=203 '
-  'r=0   g=255 b=255 '
-  'r=50  g=255 b=255 '
-  'r=100 g=255 b=255 '
-  'r=153 g=255 b=255 '
-
-  'r=0   g=152 b=203 '
-  'r=0   g=191 b=255 '
-  'r=50  g=204 b=255 '
-  'r=100 g=216 b=255 '
-  'r=153 g=229 b=255 '
-
-  'r=0   g=100 b=203 '
-  'r=0   g=127 b=255 '
-  'r=50  g=150 b=255 '
-  'r=100 g=178 b=255 '
-  'r=153 g=204 b=255 '
-
-  'r=0   g=50  b=203 '
-  'r=0   g=63  b=255 '
-  'r=50  g=100 b=255 '
-  'r=100 g=140 b=255 '
-  'r=153 g=178 b=255 '
-
-  'r=0   g=0   b=203 '
-  'r=0   g=0   b=255 '
-  'r=50  g=50  b=255 '
-  'r=100 g=100 b=255 '
-  'r=153 g=153 b=255 '
-
-  'r=50  g=0   b=203 '
-  'r=63  g=0   b=255 '
-  'r=100 g=50  b=255 '
-  'r=140 g=100 b=255 '
-  'r=178 g=153 b=255 '
-
-  'r=100 g=0   b=203 '
-  'r=127 g=0   b=255 '
-  'r=150 g=50  b=255 '
-  'r=178 g=100 b=255 '
-  'r=204 g=153 b=255 '
-
-  'g=0   r=152 b=203 '
-  'g=0   r=191 b=255 '
-  'g=50  r=204 b=255 '
-  'g=100 r=216 b=255 '
-  'g=153 r=229 b=255 '
-
-  'r=203 g=0   b=203 '
-  'r=255 g=0   b=255 '
-  'r=255 g=50  b=255 '
-  'r=255 g=100 b=255 '
-  'r=255 g=153 b=255 '
-
-  'r=203 g=0   b=152 '
-  'r=255 g=0   b=191 '
-  'r=255 g=50  b=204 '
-  'r=255 g=100 b=216 '
-  'r=255 g=153 b=229 '
-
-  'r=203 g=0   b=100 '
-  'r=255 g=0   b=127 '
-  'r=255 g=50  b=150 '
-  'r=255 g=100 b=178 '
-  'r=255 g=153 b=204 '
-
-  'r=203 g=0   b=50  '
-  'r=255 g=0   b=63  '
-  'r=255 g=50  b=100 '
-  'r=255 g=100 b=140 '
-  'r=255 g=153 b=178 '
+echo '[24-bit Colors (RGB)]'
+rgb_vals=(
+203 255 255 255 255
+203 255 255 255 255
+203 255 255 255 255
+203 255 255 255 255
+203 255 255 255 255
+152 191 204 216 229
+100 127 150 178 204
+50 63 100 140 178
+0  0  50 100 153
+0  0  50 100 153
+0  0  50 100 153
+0  0  50 100 153
+0  0  50 100 153
+0  0  50 100 153
+0  0  50 100 153
+0  0  50 100 153
+0  0  50 100 153
+50 63 100 140 178
+100 127 150 178 204
+152 191 204 216 229
+203 255 255 255 255
+203 255 255 255 255
+203 255 255 255 255
+203 255 255 255 255
 )
 
-echo
-echo '[24-bit RGB Background]'
-
-for ((i=0; i < ${#rgbs[@]}; i++)); do
-  eval $(echo ${rgbs[$i]})
-  print_sample "%-22s" "\\033[48;2;${r};${g};${b}m"
+for ((i=0; i < ${#rgb_vals[@]}; i++)); do
+  r=$i
+  g=$(( (i + 16*5) % ${#rgb_vals[@]} ))
+  b=$(( (i + 8*5) % ${#rgb_vals[@]} ))
+  print_sample "%-22s" "\\033[48;2;${rgb_vals[$r]};${rgb_vals[$g]};${rgb_vals[$b]}m"
   (( i % 5 == 4 )) && echo
 done
-
 echo
-echo '[24-bit RGB Foreground]'
 
-for ((i=0; i < ${#rgbs[@]}; i++)); do
-  eval $(echo ${rgbs[$i]})
-  print_sample "%-22s" "\\033[38;2;${r};${g};${b}m"
+for ((i=0; i < ${#rgb_vals[@]}; i++)); do
+  r=$i
+  g=$(( (i+ 16*5) % ${#rgb_vals[@]} ))
+  b=$(( (i + 8*5) % ${#rgb_vals[@]} ))
+  print_sample "%-22s" "\\033[38;2;${rgb_vals[$r]};${rgb_vals[$g]};${rgb_vals[$b]}m"
   (( i % 5 == 4 )) && echo
 done
+echo
+
+echo '[Other Styles]'
+printf "Italic     : "
+print_sample "%-14s" "\033[3;30;47m"
+print_sample "%-14s" "\033[3;37;40m"
+echo
+
+printf "Underline  : "
+print_sample "%-14s" "\033[4;30;47m"
+print_sample "%-14s" "\033[4;37;40m"
+echo
+printf "Slow blink : "
+print_sample "%-14s" "\033[5;30;47m"
+print_sample "%-14s" "\033[5;37;40m"
+echo
+printf "Rapid blink: "
+print_sample "%-14s" "\033[6;30;47m"
+print_sample "%-14s" "\033[6;37;40m"
+echo
+printf "Invert     : "
+print_sample "%-14s" "\033[7;30;47m"
+print_sample "%-14s" "\033[7;37;40m"
+echo
+printf "Conceal    : "
+print_sample "%-14s" "\033[8;30;47m"
+print_sample "%-14s" "\033[8;37;40m"
+echo
+printf "Strike     : "
+print_sample "%-14s" "\033[9;30;47m"
+print_sample "%-14s" "\033[9;37;40m"
+echo
+printf "Underline  : "
+print_sample "%-14s" "\033[21;30;47m"
+print_sample "%-14s" "\033[21;37;40m"
+echo
+
